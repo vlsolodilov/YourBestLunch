@@ -35,7 +35,7 @@ CREATE TABLE lunch_item
 (
     id            INTEGER IDENTITY PRIMARY KEY,
     date_time     TIMESTAMP    NOT NULL,
-    name          VARCHAR(255) NOT NULL,
+    description   VARCHAR(255) NOT NULL,
     price         INTEGER      NOT NULL,
     restaurant_id INTEGER      NOT NULL,
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE

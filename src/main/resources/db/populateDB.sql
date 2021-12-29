@@ -25,7 +25,7 @@ VALUES ('Restaurant_0', 'First str., 5'),
        ('Restaurant_3', 'Fourth str., 2'),
        ('Restaurant_4', 'Fifth str., 1');
 
-INSERT INTO LUNCH_ITEM (DATE_TIME, NAME, PRICE, RESTAURANT_ID)
+INSERT INTO LUNCH_ITEM (DATE_TIME, DESCRIPTION, PRICE, RESTAURANT_ID)
 VALUES ('2020-01-30 08:00:00', 'Soup_0', 10, 0),
        ('2020-01-30 08:00:00', 'Soup_1', 11, 1),
        ('2020-01-30 08:00:00', 'Soup_2', 12, 2),
