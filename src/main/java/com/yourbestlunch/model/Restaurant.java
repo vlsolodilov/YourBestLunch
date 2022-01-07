@@ -1,10 +1,7 @@
 package com.yourbestlunch.model;
 
-import org.hibernate.annotations.BatchSize;
-import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -17,7 +14,7 @@ import java.util.*;
 })
 @Entity
 @Table(name = "restaurant")
-public class Restaurant extends AbstractNamedEntity {
+public class Restaurant extends NamedEntity {
 
     public static final String DELETE = "Restaurant.delete";
     public static final String ALL_SORTED = "Restaurant.getAllSorted";

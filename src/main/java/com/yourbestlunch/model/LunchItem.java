@@ -16,7 +16,7 @@ import java.time.LocalTime;
 })
 @Entity
 @Table(name = "lunch_item")
-public class LunchItem extends AbstractBaseEntity {
+public class LunchItem extends BaseEntity {
     public static final String ALL_SORTED = "LunchItem.getAll";
     public static final String DELETE = "LunchItem.delete";
 

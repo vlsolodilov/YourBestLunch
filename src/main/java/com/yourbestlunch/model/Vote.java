@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "vote", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "vote_unique_user_datetime_idx")})
-public class Vote extends AbstractBaseEntity {
+public class Vote extends BaseEntity {
 
     @Column(name = "date_time", nullable = false)
     @NotNull

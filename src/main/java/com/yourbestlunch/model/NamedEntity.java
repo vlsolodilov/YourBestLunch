@@ -1,5 +1,11 @@
 package com.yourbestlunch.model;
 
+import com.yourbestlunch.util.validation.NoHtml;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotBlank;
@@ -7,31 +13,24 @@ import javax.validation.constraints.Size;
 
 
 @MappedSuperclass
-public abstract class AbstractNamedEntity extends AbstractBaseEntity {
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public abstract class NamedEntity extends BaseEntity {
 
     @NotBlank
     @Size(min = 2, max = 100)
     @Column(name = "name", nullable = false)
+    @NoHtml
     protected String name;
 
-    protected AbstractNamedEntity() {
-    }
-
-    protected AbstractNamedEntity(Integer id, String name) {
+    protected NamedEntity(Integer id, String name) {
         super(id);
         this.name = name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
     @Override
     public String toString() {
-        return super.toString() + '(' + name + ')';
+        return super.toString() + '[' + name + ']';
     }
 }
