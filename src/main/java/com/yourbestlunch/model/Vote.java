@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "vote", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "vote_unique_user_datetime_idx")})
+@Table(name = "vote", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "local_date"}, name = "vote_unique_user_date_idx")})
 public class Vote extends BaseEntity {
 
-    @Column(name = "date_time", nullable = false)
+    @Column(name = "local_date", nullable = false)
     @NotNull
-    private LocalDateTime dateTime;
+    private LocalDate localDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -27,30 +27,19 @@ public class Vote extends BaseEntity {
     public Vote() {
     }
 
-    public Vote(LocalDateTime dateTime) {
-        this(null, dateTime);
+    public Vote(LocalDate localDate) {
+        this(null, localDate);
     }
 
-    public Vote(Integer id, LocalDateTime dateTime) {
+    public Vote(Integer id, LocalDate localDate) {
         super(id);
-        this.dateTime = dateTime;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
+        this.localDate = localDate;
     }
 
     public LocalDate getDate() {
-        return dateTime.toLocalDate();
+        return localDate;
     }
 
-    public LocalTime getTime() {
-        return dateTime.toLocalTime();
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
 
     public User getUser() {
         return user;
@@ -72,7 +61,7 @@ public class Vote extends BaseEntity {
     public String toString() {
         return "Vote{" +
                 "id=" + id +
-                ", dateTime=" + dateTime +
+                ", localDate=" + localDate +
                 '}';
     }
 }

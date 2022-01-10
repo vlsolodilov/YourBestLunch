@@ -44,11 +44,11 @@ CREATE TABLE lunch_item
 CREATE TABLE vote
 (
     id            INTEGER IDENTITY PRIMARY KEY,
-    date_time     TIMESTAMP NOT NULL,
-    user_id       INTEGER   NOT NULL,
-    restaurant_id INTEGER   NOT NULL,
+    local_date    DATE    NOT NULL,
+    user_id       INTEGER NOT NULL,
+    restaurant_id INTEGER NOT NULL,
     FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 CREATE UNIQUE INDEX vote_unique_user_datetime_idx
-    ON vote (user_id, date_time)
+    ON vote (user_id, local_date)
