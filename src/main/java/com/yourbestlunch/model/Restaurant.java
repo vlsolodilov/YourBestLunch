@@ -8,6 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.*;
 
 @NamedQueries({
@@ -15,12 +16,12 @@ import java.util.*;
         @NamedQuery(name = Restaurant.ALL_SORTED, query = "SELECT r FROM Restaurant r ORDER BY r.name"),
 })
 @Entity
-@Table(name = "restaurant")
+@Table(name = "restaurant", uniqueConstraints = {@UniqueConstraint(columnNames = {"address", "name"}, name = "restaurant_unique_address_name")})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
-public class Restaurant extends NamedEntity {
+public class Restaurant extends NamedEntity implements Serializable {
 
     public static final String DELETE = "Restaurant.delete";
     public static final String ALL_SORTED = "Restaurant.getAllSorted";
@@ -31,7 +32,7 @@ public class Restaurant extends NamedEntity {
     private String address;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
-    @OrderBy("dateTime DESC")
+    @OrderBy("localDate DESC")
     @ToString.Exclude
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
     @JsonManagedReference

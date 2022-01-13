@@ -1,6 +1,8 @@
 package com.yourbestlunch.web.lunch;
 
+import com.yourbestlunch.error.IllegalRequestDataException;
 import com.yourbestlunch.model.LunchItem;
+import com.yourbestlunch.model.Restaurant;
 import com.yourbestlunch.repository.LunchRepository;
 import com.yourbestlunch.repository.RestaurantRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +17,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-import static com.yourbestlunch.util.validation.ValidationUtil.assureIdConsistent;
-import static com.yourbestlunch.util.validation.ValidationUtil.checkNew;
+import static com.yourbestlunch.util.validation.ValidationUtil.*;
 
 
 @RestController
@@ -24,7 +25,7 @@ import static com.yourbestlunch.util.validation.ValidationUtil.checkNew;
 @Slf4j
 public class AdminLunchController {
 
-    static final String REST_URL = "/api/admin/restaurants/{restaurantId}/lunch/";
+    static final String REST_URL = "/api/admin/restaurants/{restaurantId}/lunch";
 
     @Autowired
     protected LunchRepository lunchRepository;
@@ -32,16 +33,16 @@ public class AdminLunchController {
     protected RestaurantRepository restaurantRepository;
 
     @GetMapping("/{id}")
-    public ResponseEntity<LunchItem> get(@PathVariable int id) {
+    public ResponseEntity<LunchItem> get(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get {}", id);
-        return ResponseEntity.of(lunchRepository.findById(id));
+        return ResponseEntity.of(lunchRepository.get(id, restaurantId));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int id) {
+    public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete {}", id);
-        lunchRepository.deleteExisted(id);
+        checkModification(lunchRepository.delete(id, restaurantId), id);
     }
 
     @GetMapping
@@ -58,15 +59,17 @@ public class AdminLunchController {
         LunchItem created = lunchRepository.save(lunchItem);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
+                .buildAndExpand(restaurantId, created.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody LunchItem lunchItem, @PathVariable int id) {
+    public void update(@Valid @RequestBody LunchItem lunchItem, @PathVariable int id, @PathVariable int restaurantId) {
         log.info("update {} with id={}", lunchItem, id);
         assureIdConsistent(lunchItem, id);
+        lunchRepository.get(id, restaurantId).orElseThrow(
+                () -> new IllegalRequestDataException("LunchItem from another restaurant"));
         lunchRepository.save(lunchItem);
     }
 

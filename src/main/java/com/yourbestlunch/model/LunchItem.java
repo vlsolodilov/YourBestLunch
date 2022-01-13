@@ -1,6 +1,8 @@
 package com.yourbestlunch.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.yourbestlunch.HasIdAndEmail;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
@@ -9,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,13 +22,17 @@ import java.time.LocalTime;
 })
 @Entity
 @Table(name = "lunch_item")
-public class LunchItem extends BaseEntity {
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(callSuper = true)
+public class LunchItem extends BaseEntity implements Serializable {
     public static final String ALL_SORTED = "LunchItem.getAll";
     public static final String DELETE = "LunchItem.delete";
 
-    @Column(name = "date_time", nullable = false)
+    @Column(name = "local_date", nullable = false, columnDefinition = "date default now()")
     @NotNull
-    private LocalDateTime dateTime;
+    private LocalDate localDate;
 
     @Column(name = "description", nullable = false)
     @NotBlank
@@ -38,72 +45,27 @@ public class LunchItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
-    @NotNull
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
+    @ToString.Exclude
     private Restaurant restaurant;
 
-    public LunchItem() {
+    public LunchItem(LocalDate localDate, String description, int price) {
+        this(null, localDate, description, price);
     }
 
-    public LunchItem(LocalDateTime dateTime, String description, int price) {
-        this(null, dateTime, description, price);
-    }
-
-    public LunchItem(Integer id, LocalDateTime dateTime, String description, int price) {
+    public LunchItem(Integer id, LocalDate localDate, String description, int price) {
         super(id);
-        this.dateTime = dateTime;
+        this.localDate = localDate;
         this.description = description;
         this.price = price;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public LocalDate getDate() {
-        return dateTime.toLocalDate();
-    }
-
-    public LocalTime getTime() {
-        return dateTime.toLocalTime();
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public void setDescription(String description) {
+    public LunchItem(Integer id, LocalDate localDate, String description, int price, Restaurant restaurant) {
+        super(id);
+        this.localDate = localDate;
         this.description = description;
-    }
-
-    public void setPrice(int price) {
         this.price = price;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
-    }
-
-    @Override
-    public String toString() {
-        return "LunchItem{" +
-                "id=" + id +
-                ", dateTime=" + dateTime +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                '}';
     }
 }

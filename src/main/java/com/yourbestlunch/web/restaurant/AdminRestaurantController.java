@@ -1,6 +1,8 @@
 package com.yourbestlunch.web.restaurant;
 
+import com.yourbestlunch.error.IllegalRequestDataException;
 import com.yourbestlunch.model.Restaurant;
+import com.yourbestlunch.web.GlobalExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -54,6 +56,10 @@ public class AdminRestaurantController extends AbstractRestaurantController {
     public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
         log.info("create {}", restaurant);
         checkNew(restaurant);
+        if (repository.findByNameAndAddress(restaurant.getName(), restaurant.getAddress())
+                .isPresent()){
+            throw new IllegalRequestDataException(GlobalExceptionHandler.EXCEPTION_DUPLICATE_RESTAURANT);
+        }
         Restaurant created = prepareAndSave(restaurant);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -67,6 +73,10 @@ public class AdminRestaurantController extends AbstractRestaurantController {
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update {} with id={}", restaurant, id);
         assureIdConsistent(restaurant, id);
+        if (repository.findByNameAndAddress(restaurant.getName(), restaurant.getAddress())
+                .isPresent()){
+            throw new IllegalRequestDataException(GlobalExceptionHandler.EXCEPTION_DUPLICATE_RESTAURANT);
+        }
         prepareAndSave(restaurant);
     }
 

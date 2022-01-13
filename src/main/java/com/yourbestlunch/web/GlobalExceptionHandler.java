@@ -29,6 +29,8 @@ import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.M
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String EXCEPTION_DUPLICATE_EMAIL = "User with this email already exists";
+    public static final String EXCEPTION_DUPLICATE_RESTAURANT = "Restaurant with this name and address already exists";
+    public static final String EXCEPTION_DUPLICATE_VOTE = "Vote with this user and restaurant today already exists";
 
     private final ErrorAttributes errorAttributes;
 

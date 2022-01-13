@@ -1,14 +1,22 @@
 package com.yourbestlunch.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "vote", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "local_date"}, name = "vote_unique_user_date_idx")})
-public class Vote extends BaseEntity {
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(callSuper = true)
+public class Vote extends BaseEntity implements Serializable {
 
     @Column(name = "local_date", nullable = false)
     @NotNull
@@ -17,15 +25,18 @@ public class Vote extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToString.Exclude
+    @JsonBackReference
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ToString.Exclude
+    @JsonBackReference
     private Restaurant restaurant;
-
-    public Vote() {
-    }
 
     public Vote(LocalDate localDate) {
         this(null, localDate);
@@ -36,32 +47,10 @@ public class Vote extends BaseEntity {
         this.localDate = localDate;
     }
 
-    public LocalDate getDate() {
-        return localDate;
-    }
-
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
+    public Vote(Integer id, LocalDate localDate, User user, Restaurant restaurant) {
+        super(id);
+        this.localDate = localDate;
         this.user = user;
-    }
-
-    public Restaurant getRestaurant() {
-        return restaurant;
-    }
-
-    public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
-    }
-
-    @Override
-    public String toString() {
-        return "Vote{" +
-                "id=" + id +
-                ", localDate=" + localDate +
-                '}';
     }
 }
