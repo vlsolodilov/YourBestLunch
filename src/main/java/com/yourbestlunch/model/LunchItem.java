@@ -1,7 +1,6 @@
 package com.yourbestlunch.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.yourbestlunch.HasIdAndEmail;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,8 +12,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @NamedQueries({
         @NamedQuery(name = LunchItem.ALL_SORTED, query = "SELECT li FROM LunchItem li WHERE li.restaurant.id=:restaurantId ORDER BY li.description"),
@@ -40,18 +37,18 @@ public class LunchItem extends BaseEntity implements Serializable {
     private String description;
 
     @Column(name = "price", nullable = false)
-    @Range(min = 10, max = 10000)
+    @Range(min = 0, max = 10000)
     private int price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference
+    @JsonBackReference(value = "restaurant-lunchItem")
     @ToString.Exclude
     private Restaurant restaurant;
 
-    public LunchItem(LocalDate localDate, String description, int price) {
-        this(null, localDate, description, price);
+    public LunchItem(LunchItem l) {
+        this(l.id, l.localDate, l.description, l.price, l.restaurant);
     }
 
     public LunchItem(Integer id, LocalDate localDate, String description, int price) {

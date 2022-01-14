@@ -11,14 +11,17 @@ import javax.validation.constraints.Size;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class RestaurantTo extends NamedTo implements HasId {
+public class RestaurantWithVoteTo extends NamedTo implements HasId {
 
     @NotBlank
     @Size(max = 100)
     String address;
 
-    public RestaurantTo(Integer id, String name, String address) {
+    int countVote;
+
+    public RestaurantWithVoteTo(Integer id, String name, String address, int countVote) {
         super(id, name);
         this.address = address;
+        this.countVote = countVote;
     }
 }

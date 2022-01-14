@@ -5,11 +5,14 @@ import com.yourbestlunch.model.LunchItem;
 import com.yourbestlunch.model.Restaurant;
 import com.yourbestlunch.repository.LunchRepository;
 import com.yourbestlunch.repository.RestaurantRepository;
+import com.yourbestlunch.to.LunchItemTo;
+import com.yourbestlunch.util.LunchItemUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -52,11 +55,11 @@ public class AdminLunchController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LunchItem> createWithLocation(@Valid @RequestBody LunchItem lunchItem, @PathVariable int restaurantId) {
-        log.info("create {}", lunchItem);
-        checkNew(lunchItem);
-        lunchItem.setRestaurant(restaurantRepository.getById(restaurantId));
-        LunchItem created = lunchRepository.save(lunchItem);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<LunchItem> createWithLocation(@Valid @RequestBody LunchItemTo lunchItemTo, @PathVariable int restaurantId) {
+        log.info("create {}", lunchItemTo);
+        checkNew(lunchItemTo);
+        LunchItem created = lunchRepository.save(LunchItemUtil.createNewFromTo(lunchItemTo, restaurantRepository.getById(restaurantId)));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(restaurantId, created.getId()).toUri();
@@ -65,12 +68,14 @@ public class AdminLunchController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody LunchItem lunchItem, @PathVariable int id, @PathVariable int restaurantId) {
-        log.info("update {} with id={}", lunchItem, id);
-        assureIdConsistent(lunchItem, id);
+    @Transactional
+    public void update(@Valid @RequestBody LunchItemTo lunchItemTo, @PathVariable int id, @PathVariable int restaurantId) {
+        log.info("update {} with id={}", lunchItemTo, id);
+        assureIdConsistent(lunchItemTo, id);
         lunchRepository.get(id, restaurantId).orElseThrow(
                 () -> new IllegalRequestDataException("LunchItem from another restaurant"));
-        lunchRepository.save(lunchItem);
+        LunchItem lunchItem = lunchRepository.getById(id);
+        lunchRepository.save(LunchItemUtil.updateFromTo(lunchItem, lunchItemTo));
     }
 
 }

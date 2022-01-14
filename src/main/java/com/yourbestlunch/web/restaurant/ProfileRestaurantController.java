@@ -35,7 +35,7 @@ import static com.yourbestlunch.util.validation.ValidationUtil.checkNew;
 // TODO: cache only most requested data!
 @CacheConfig(cacheNames = "restaurants")
 public class ProfileRestaurantController extends AbstractRestaurantController {
-    static final String REST_URL = "/api/profile/restaurants";
+    static final String REST_URL = "/api/restaurants";
     static final LocalTime FINISH_CHANGING_VOTE = LocalTime.of(11, 0);
 
     @Autowired
@@ -56,10 +56,10 @@ public class ProfileRestaurantController extends AbstractRestaurantController {
 
     @GetMapping("/{id}/with-lunch")
     public Restaurant getWithMeals(@PathVariable int id) {
-        return repository.getWithLunch(id);
+        return repository.getWithLunch(id, LocalDate.now());
     }
 
-    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public void createVote(@AuthenticationPrincipal AuthUser authUser, @PathVariable int id) {
         LocalDate dateNow = LocalDate.now();
@@ -71,7 +71,7 @@ public class ProfileRestaurantController extends AbstractRestaurantController {
         }
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
     public void updateVote(@AuthenticationPrincipal AuthUser authUser, @PathVariable int id) {

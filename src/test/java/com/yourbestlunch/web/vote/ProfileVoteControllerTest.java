@@ -2,7 +2,7 @@ package com.yourbestlunch.web.vote;
 
 import com.yourbestlunch.repository.RestaurantRepository;
 import com.yourbestlunch.repository.VoteRepository;
-import com.yourbestlunch.to.RestaurantTo;
+import com.yourbestlunch.to.RestaurantWithVoteTo;
 import com.yourbestlunch.util.RestaurantUtil;
 import com.yourbestlunch.web.AbstractControllerTest;
 import com.yourbestlunch.web.restaurant.RestaurantTestData;
@@ -35,7 +35,7 @@ class ProfileVoteControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(RestaurantTestData.RESTAURANT_TO_MATCHER.contentJson(RestaurantUtil.getTos(voteRepository.getAll(LocalDate.now()),
-                        restaurantRepository.findAll()).stream().sorted(Comparator.comparingInt(RestaurantTo::getCountVote).reversed()).toList()));
+                        restaurantRepository.findAll()).stream().sorted(Comparator.comparingInt(RestaurantWithVoteTo::getCountVote).reversed()).toList()));
     }
 
     @Test
@@ -46,6 +46,6 @@ class ProfileVoteControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(RestaurantTestData.RESTAURANT_TO_MATCHER.contentJson(RestaurantUtil.getTos(voteRepository.getAll(VoteTestData.VOTE_DATE),
-                        restaurantRepository.findAll()).stream().sorted(Comparator.comparingInt(RestaurantTo::getCountVote).reversed()).toList()));
+                        restaurantRepository.findAll()).stream().sorted(Comparator.comparingInt(RestaurantWithVoteTo::getCountVote).reversed()).toList()));
     }
 }

@@ -2,7 +2,9 @@ package com.yourbestlunch.web.restaurant;
 
 import com.yourbestlunch.model.Restaurant;
 import com.yourbestlunch.repository.RestaurantRepository;
+import com.yourbestlunch.to.RestaurantTo;
 import com.yourbestlunch.util.JsonUtil;
+import com.yourbestlunch.util.RestaurantUtil;
 import com.yourbestlunch.web.AbstractControllerTest;
 import com.yourbestlunch.web.GlobalExceptionHandler;
 import com.yourbestlunch.web.user.UserTestData;
@@ -80,24 +82,25 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void update() throws Exception {
-        Restaurant updated = RestaurantTestData.getUpdated();
-        updated.setId(null);
+        RestaurantTo updatedTo = new RestaurantTo(null, "newName", "newAddress");
         perform(MockMvcRequestBuilders.put(REST_URL + RestaurantTestData.RESTAURANT_ID_1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updated)))
+                .content(JsonUtil.writeValue(updatedTo)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        RestaurantTestData.RESTAURANT_MATCHER.assertMatch(restaurantRepository.getById(RestaurantTestData.RESTAURANT_ID_1), RestaurantTestData.getUpdated());
+        RestaurantTestData.RESTAURANT_MATCHER_WITH_LUNCH.assertMatch(restaurantRepository.getById(RestaurantTestData.RESTAURANT_ID_1),
+                RestaurantUtil.updateFromTo(new Restaurant(RestaurantTestData.restaurant1), updatedTo));
     }
 
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void createWithLocation() throws Exception {
-        Restaurant newRestaurant = RestaurantTestData.getNew();
+        RestaurantTo newTo = new RestaurantTo(null, "newName", "newAddress");
+        Restaurant newRestaurant = RestaurantUtil.createNewFromTo(newTo);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newRestaurant)))
+                .content(JsonUtil.writeValue(newTo)))
                 .andExpect(status().isCreated());
 
         Restaurant created = RestaurantTestData.RESTAURANT_MATCHER.readFromJson(action);
@@ -120,7 +123,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void createInvalid() throws Exception {
-        Restaurant invalid = new Restaurant(null, "", "newAddress");
+        RestaurantTo invalid = new RestaurantTo(null, "", "newAddress");
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(invalid)))
@@ -131,8 +134,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void updateInvalid() throws Exception {
-        Restaurant invalid = new Restaurant(RestaurantTestData.restaurant1);
-        invalid.setName("");
+        RestaurantTo invalid = new RestaurantTo(null, "", "newAddress");
         perform(MockMvcRequestBuilders.put(REST_URL + RestaurantTestData.RESTAURANT_ID_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(invalid)))
@@ -143,7 +145,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void updateHtmlUnsafe() throws Exception {
-        Restaurant updated = new Restaurant(RestaurantTestData.restaurant1);
+        RestaurantTo updated = new RestaurantTo(null, "Restaurant_1", RestaurantTestData.RESTAURANT_ADDRESS_1);
         updated.setName("<script>alert(123)</script>");
         perform(MockMvcRequestBuilders.put(REST_URL + RestaurantTestData.RESTAURANT_ID_1)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -156,9 +158,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NEVER)
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void updateDuplicate() throws Exception {
-        Restaurant updated = new Restaurant(RestaurantTestData.restaurant1);
-        updated.setName("Restaurant_2");
-        updated.setAddress(RestaurantTestData.RESTAURANT_ADDRESS_2);
+        RestaurantTo updated = new RestaurantTo(null, "Restaurant_2", RestaurantTestData.RESTAURANT_ADDRESS_2);
         perform(MockMvcRequestBuilders.put(REST_URL + RestaurantTestData.RESTAURANT_ID_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
@@ -171,7 +171,7 @@ class AdminRestaurantControllerTest extends AbstractControllerTest {
     @Transactional(propagation = Propagation.NEVER)
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void createDuplicate() throws Exception {
-        Restaurant expected = new Restaurant(null, "Restaurant_1", RestaurantTestData.RESTAURANT_ADDRESS_1);
+        RestaurantTo expected = new RestaurantTo(null, "Restaurant_1", RestaurantTestData.RESTAURANT_ADDRESS_1);
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(expected)))

@@ -2,7 +2,9 @@ package com.yourbestlunch.web.lunch;
 
 import com.yourbestlunch.model.LunchItem;
 import com.yourbestlunch.repository.LunchRepository;
+import com.yourbestlunch.to.LunchItemTo;
 import com.yourbestlunch.util.JsonUtil;
+import com.yourbestlunch.util.LunchItemUtil;
 import com.yourbestlunch.web.AbstractControllerTest;
 import com.yourbestlunch.web.restaurant.RestaurantTestData;
 import com.yourbestlunch.web.user.UserTestData;
@@ -12,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -77,24 +81,25 @@ class AdminLunchControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void update() throws Exception {
-        LunchItem updated = LunchTestData.getUpdated();
-        updated.setId(null);
+        LunchItemTo updatedTo = new LunchItemTo(null, LocalDate.now(), "newDesc",99);
         perform(MockMvcRequestBuilders.put(REST_URL + RestaurantTestData.RESTAURANT_ID_1 + "/lunch/" + LunchTestData.LUNCH_ID_1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updated)))
+                .content(JsonUtil.writeValue(updatedTo)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        LunchTestData.LUNCH_MATCHER.assertMatch(lunchRepository.getById(LunchTestData.LUNCH_ID_1), LunchTestData.getUpdated());
+        LunchTestData.LUNCH_MATCHER.assertMatch(lunchRepository.getById(LunchTestData.LUNCH_ID_1),
+                LunchItemUtil.updateFromTo(new LunchItem(LunchTestData.lunchItem1), updatedTo));
     }
 
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void createWithLocation() throws Exception {
-        LunchItem  newLunchItem = LunchTestData.getNew();
+        LunchItemTo newTo = new LunchItemTo(null, LocalDate.now(), "newDesc", 99);
+        LunchItem newLunchItem = LunchItemUtil.createNewFromTo(newTo, RestaurantTestData.restaurant1);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + RestaurantTestData.RESTAURANT_ID_1 + "/lunch/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newLunchItem)))
+                .content(JsonUtil.writeValue(newTo)))
                 .andExpect(status().isCreated());
 
         LunchItem created = LunchTestData.LUNCH_MATCHER.readFromJson(action);
@@ -116,8 +121,7 @@ class AdminLunchControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void createInvalid() throws Exception {
-        LunchItem invalid = LunchTestData.getNew();
-        invalid.setDescription("");
+        LunchItemTo invalid = new LunchItemTo(null, LocalDate.now(), "", 99);
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(invalid)))
@@ -128,8 +132,7 @@ class AdminLunchControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void updateInvalid() throws Exception {
-        LunchItem invalid = LunchTestData.lunchItem1;
-        invalid.setDescription("");
+        LunchItemTo invalid = new LunchItemTo(null, LocalDate.now(), "", 99);
         perform(MockMvcRequestBuilders.put(REST_URL + RestaurantTestData.RESTAURANT_ID_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(invalid)))
@@ -140,8 +143,7 @@ class AdminLunchControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void updateHtmlUnsafe() throws Exception {
-        LunchItem updated = LunchTestData.lunchItem1;
-        updated.setDescription("<script>alert(123)</script>");
+        LunchItemTo updated = new LunchItemTo(null, LocalDate.now(), "<script>alert(123)</script>", 99);
         perform(MockMvcRequestBuilders.put(REST_URL + RestaurantTestData.RESTAURANT_ID_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))

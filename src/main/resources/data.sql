@@ -21,22 +21,21 @@ VALUES ('Restaurant_1', 'First str., 5'),
        ('Restaurant_5', 'Fifth str., 1');
 
 INSERT INTO LUNCH_ITEM (LOCAL_DATE, DESCRIPTION, PRICE, RESTAURANT_ID)
-VALUES ('2022-01-13', 'Soup_1', 11, 1),
-       ('2022-01-13', 'Soup_2', 12, 2),
-       ('2022-01-13', 'Soup_3', 13, 3),
-       ('2022-01-13', 'Soup_4', 14, 4),
-       ('2022-01-13', 'Soup_5', 15, 5),
-       ('2022-01-13', 'Dish_1', 21, 1),
-       ('2022-01-13', 'Dish_2', 22, 2),
-       ('2022-01-13', 'Dish_3', 23, 3),
-       ('2022-01-13', 'Dish_4', 24, 4),
-       ('2022-01-13', 'Dish_5', 25, 5);
+VALUES (now(), 'Soup_1', 11, 1),
+       (now(), 'Soup_2', 12, 2),
+       (now(), 'Soup_3', 13, 3),
+       (now(), 'Soup_4', 14, 4),
+       (now(), 'Soup_5', 15, 5),
+       (now(), 'Dish_1', 21, 1),
+       (now(), 'Dish_2', 22, 2),
+       (now(), 'Dish_3', 23, 3),
+       (now(), 'Dish_4', 24, 4),
+       (now(), 'Dish_5', 25, 5);
 
 INSERT INTO VOTE (LOCAL_DATE, USER_ID, RESTAURANT_ID)
-VALUES ('2022-01-13', 1, 1),
-       ('2022-01-13', 2, 2),
-       ('2022-01-13', 3, 2),
-       ('2022-01-13', 4, 3),
-       ('2022-01-13', 5, 3);
+VALUES (now(), 1, 1),
+       (now(), 2, 2),
+       (now(), 3, 2),
+       (now(), 4, 3);
 
 

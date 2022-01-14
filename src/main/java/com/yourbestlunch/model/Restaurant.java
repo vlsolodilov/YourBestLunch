@@ -35,7 +35,7 @@ public class Restaurant extends NamedEntity implements Serializable {
     @OrderBy("localDate DESC")
     @ToString.Exclude
     @OnDelete(action = OnDeleteAction.CASCADE) //https://stackoverflow.com/a/44988100/548473
-    @JsonManagedReference
+    @JsonManagedReference(value = "restaurant-lunchItem")
     private List<LunchItem> lunchItems;
 
     public Restaurant(Restaurant r) {

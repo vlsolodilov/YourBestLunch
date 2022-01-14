@@ -2,7 +2,7 @@ package com.yourbestlunch.web.vote;
 
 import com.yourbestlunch.repository.RestaurantRepository;
 import com.yourbestlunch.repository.VoteRepository;
-import com.yourbestlunch.to.RestaurantTo;
+import com.yourbestlunch.to.RestaurantWithVoteTo;
 import com.yourbestlunch.util.RestaurantUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping(value = ProfileVoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class ProfileVoteController {
-    static final String REST_URL = "/api/profile/restaurants/rating";
+    static final String REST_URL = "/api/restaurants/rating";
 
     @Autowired
     protected VoteRepository voteRepository;
@@ -30,20 +30,20 @@ public class ProfileVoteController {
     protected RestaurantRepository restaurantRepository;
 
     @GetMapping
-    public List<RestaurantTo> getAllToday() {
+    public List<RestaurantWithVoteTo> getAllToday() {
         log.info("getAllToday");
         LocalDate today = LocalDate.now();
         return RestaurantUtil.getTos(voteRepository.getAll(today), restaurantRepository.findAll()).stream()
-                .sorted(Comparator.comparingInt(RestaurantTo::getCountVote).reversed())
+                .sorted(Comparator.comparingInt(RestaurantWithVoteTo::getCountVote).reversed())
                 .toList();
     }
 
     @GetMapping("/by")
     // https://stackoverflow.com/questions/40274353/how-to-use-localdatetime-requestparam-in-spring-i-get-failed-to-convert-string
-    public List<RestaurantTo> getAllByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate) {
+    public List<RestaurantWithVoteTo> getAllByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate) {
         log.info("getAllByDate");
         return RestaurantUtil.getTos(voteRepository.getAll(localDate), restaurantRepository.findAll()).stream()
-                .sorted(Comparator.comparingInt(RestaurantTo::getCountVote).reversed())
+                .sorted(Comparator.comparingInt(RestaurantWithVoteTo::getCountVote).reversed())
                 .toList();
     }
 }
