@@ -26,3 +26,8 @@ P.S.: Make sure everything works with latest version that is on github :)
 P.P.S.: Assume that your API will be used by a frontend developer to build frontend on top of that.
 
 -----------------------------
+Link to Swagger: http://localhost:8080/swagger-ui.html
+
+Credentials:
+* admin - login: admin@gmail.com, password: admin
+* user - login: user@yandex.ru, password: password

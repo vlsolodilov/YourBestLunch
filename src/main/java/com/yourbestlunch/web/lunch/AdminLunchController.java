@@ -2,7 +2,6 @@ package com.yourbestlunch.web.lunch;
 
 import com.yourbestlunch.error.IllegalRequestDataException;
 import com.yourbestlunch.model.LunchItem;
-import com.yourbestlunch.model.Restaurant;
 import com.yourbestlunch.repository.LunchRepository;
 import com.yourbestlunch.repository.RestaurantRepository;
 import com.yourbestlunch.to.LunchItemTo;
