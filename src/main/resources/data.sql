@@ -33,9 +33,6 @@ VALUES (now(), 'Soup_1', 11, 1),
        (now(), 'Dish_5', 25, 5);
 
 INSERT INTO VOTE (LOCAL_DATE, USER_ID, RESTAURANT_ID)
-VALUES (now(), 1, 1),
-       (now(), 2, 2),
-       (now(), 3, 2),
-       (now(), 4, 3);
-
-
+VALUES (now(), 3, 2),
+       (now(), 4, 3),
+       (now(), 5, 3);

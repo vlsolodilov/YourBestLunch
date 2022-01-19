@@ -78,7 +78,7 @@ class ProfileRestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = UserTestData.USER_MAIL_4)
+    @WithUserDetails(value = UserTestData.USER_MAIL)
     void createVote() throws Exception {
         Vote newVote = VoteTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + RestaurantTestData.RESTAURANT_ID_2)
@@ -88,7 +88,7 @@ class ProfileRestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithUserDetails(value = UserTestData.USER_MAIL_4)
+    @WithUserDetails(value = UserTestData.USER_MAIL)
     void updateVote() throws Exception {
         Vote updated = VoteTestData.getUpdated();
         updated.setId(null);
