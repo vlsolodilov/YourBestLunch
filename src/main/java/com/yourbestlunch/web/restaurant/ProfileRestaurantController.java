@@ -26,7 +26,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = ProfileRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-// TODO: cache only most requested data!
 @CacheConfig(cacheNames = "restaurants")
 public class ProfileRestaurantController extends AbstractRestaurantController {
     static final String REST_URL = "/api/restaurants";

@@ -11,10 +11,6 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.*;
 
-@NamedQueries({
-        @NamedQuery(name = Restaurant.DELETE, query = "DELETE FROM Restaurant r WHERE r.id=:id"),
-        @NamedQuery(name = Restaurant.ALL_SORTED, query = "SELECT r FROM Restaurant r ORDER BY r.name"),
-})
 @Entity
 @Table(name = "restaurant", uniqueConstraints = {@UniqueConstraint(columnNames = {"address", "name"}, name = "restaurant_unique_address_name")})
 @Getter
@@ -22,9 +18,6 @@ import java.util.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
 public class Restaurant extends NamedEntity implements Serializable {
-
-    public static final String DELETE = "Restaurant.delete";
-    public static final String ALL_SORTED = "Restaurant.getAllSorted";
 
     @Column(name = "address", nullable = false)
     @NotBlank

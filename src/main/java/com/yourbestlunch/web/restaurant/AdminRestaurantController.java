@@ -28,7 +28,6 @@ import static com.yourbestlunch.util.validation.ValidationUtil.checkNew;
 @RestController
 @RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-// TODO: cache only most requested data!
 @CacheConfig(cacheNames = "restaurants")
 public class AdminRestaurantController extends AbstractRestaurantController {
 

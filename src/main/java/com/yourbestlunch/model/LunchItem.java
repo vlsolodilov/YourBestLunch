@@ -13,10 +13,6 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-@NamedQueries({
-        @NamedQuery(name = LunchItem.ALL_SORTED, query = "SELECT li FROM LunchItem li WHERE li.restaurant.id=:restaurantId ORDER BY li.description"),
-        @NamedQuery(name = LunchItem.DELETE, query = "DELETE FROM LunchItem li WHERE li.id=:id AND li.restaurant.id=:restaurantId"),
-})
 @Entity
 @Table(name = "lunch_item")
 @Getter
@@ -24,8 +20,6 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
 public class LunchItem extends BaseEntity implements Serializable {
-    public static final String ALL_SORTED = "LunchItem.getAll";
-    public static final String DELETE = "LunchItem.delete";
 
     @Column(name = "local_date", nullable = false, columnDefinition = "date default now()")
     @NotNull
